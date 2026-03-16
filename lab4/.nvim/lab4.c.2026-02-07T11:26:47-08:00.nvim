@@ -1,0 +1,31 @@
+#define _POSIX_SOURCE 200709
+#include <stdio.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <unistd.h>
+
+struct header {
+  uint64_t size;
+  struct header* next;
+};
+
+int main() {
+  // Increase heap size by 256 bytes by increasing the program break 
+  intptr_t increment = 256;
+  void* break = sbrk(increment);
+  if (errno == ENOMEM) {
+    printf("Failed to allocate memory.\n");
+    exit(1);
+  }
+
+
+  
+  // Create two equal size memory blocks, headed by a struct 
+  // First block initialized to zeroes
+  // Second block initialized to ones 
+  // Print thhe address of each block, values of the headers, and block contents 
+
+  return 0;
+}

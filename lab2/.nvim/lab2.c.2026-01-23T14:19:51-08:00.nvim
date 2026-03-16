@@ -1,0 +1,25 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+  char path[256];
+  pid_t pid;
+  
+  while (true) {
+    scanf("%s", path);
+    pid = fork();
+
+    if (pid == 0) { // fork() returns 0 to the child: replace process
+      execl(path, path, NULL);
+    } else if (pid > 0) { 
+      // fork() returns the pid to the parent process: wait on the child process 
+      waitpid(pid, NULL, 0);
+    } else if (pid == -1) {
+      perror("fork() failed");
+    }
+  }
+  return 0;
+}

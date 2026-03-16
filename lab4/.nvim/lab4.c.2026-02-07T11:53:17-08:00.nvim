@@ -1,0 +1,39 @@
+#define _POSIX_C_SOURCE 200809
+#include <errno.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+struct header {
+  uint64_t size;
+  struct header *next;
+};
+
+int main() {
+  // Increase heap size by 256 bytes by increasing the program break
+  intptr_t increment = 256;
+  void *break = sbrk(increment);
+  if (break == (void*)-1) {
+    printf("Failed to allocate memory with sbrk.\n");
+    exit(1);
+  }
+
+  // Create two equal size memory blocks, headed by a struct
+  // First block initialized to zeroes
+  struct header *first_block_header = (struct header *)break;
+  struct header *second_block_header = first_block_header + 128;
+  
+  first_block_header->size = 128;
+  first_block_header->next = NULL;
+
+  second_block_header->size = 128;
+  second_block_header->next = first_block_header;
+
+  memset(first_block_header + sizeof(first_block_header), 0, 128 - sizeof(first_block_header));
+  memset(second_block_header + sizeof(second_block_header), 1, 128 - sizeof(first_block_header));
+  // Print the address of each block, values of the headers, and block contents
+
+  return 0;
+}
